@@ -20,6 +20,9 @@ public final class AdVideoControls: UIViewController {
     @IBOutlet private var titleLabel: UILabel!
     /// Skip button. Not yet implemented, hidden by default.
     @IBOutlet private var skipButton: UIButton!
+    @IBOutlet private var airplayView: AirPlayView!
+    @IBOutlet private var seekerAirPlayTrailingCostraint: NSLayoutConstraint!
+    @IBOutlet private var seekerEdgeTrailingCostraint: NSLayoutConstraint!
     /// AirPlay active view. Shows when AirPlay is active
     @IBOutlet private var airplayActiveView: AirPlayActiveView!
     
@@ -29,6 +32,7 @@ public final class AdVideoControls: UIViewController {
                                     seeker: nil,
                                     tapAction: nil,
                                     isLoading: true,
+                                    airplayButtonHidden: true,
                                     airplayActiveViewHidden: true) {
         didSet {
             guard isViewLoaded else { return }
@@ -61,6 +65,15 @@ public final class AdVideoControls: UIViewController {
         seekerView.isCurrentTimeEnabled = false
         remainingPlayTimeLabel.text = props.seeker?.remainingPlayTime
         airplayActiveView.isHidden = props.airplayActiveViewHidden
+        seekerAirPlayTrailingCostraint.isActive = !props.airplayButtonHidden
+        seekerEdgeTrailingCostraint.isActive = props.airplayButtonHidden
+        airplayView.props = AirPlayView.Props(
+            icons: AirPlayView.Props.Icons(
+                normal: UIImage.init(named: "icon-airplay", in: Bundle(for: AirPlayView.self), compatibleWith: nil)!,
+                selected: UIImage.init(named: "icon-airplay-active", in: Bundle(for: AirPlayView.self), compatibleWith: nil)!,
+                highlighted: UIImage.init(named: "icon-airplay-active", in: Bundle(for: AirPlayView.self), compatibleWith: nil)!)
+        )
+        airplayView.isHidden = props.airplayButtonHidden
     }
     
     public struct Props {
@@ -68,11 +81,13 @@ public final class AdVideoControls: UIViewController {
                                             seeker: nil,
                                             tapAction: nil,
                                             isLoading: true,
+                                            airplayButtonHidden: true,
                                             airplayActiveViewHidden: true)
         public let mainAction: MainAction
         public let seeker: Seeker?
         public let tapAction: Action<Void>?
         public let isLoading: Bool
+        public let airplayButtonHidden: Bool
         public let airplayActiveViewHidden: Bool
         
         public enum MainAction {
@@ -93,11 +108,13 @@ public final class AdVideoControls: UIViewController {
                     seeker: Seeker?,
                     tapAction: Action<Void>?,
                     isLoading: Bool,
+                    airplayButtonHidden: Bool,
                     airplayActiveViewHidden: Bool) {
             self.mainAction = mainAction
             self.seeker = seeker
             self.tapAction = tapAction
             self.isLoading = isLoading
+            self.airplayButtonHidden = airplayButtonHidden
             self.airplayActiveViewHidden = airplayActiveViewHidden
         }
     }
