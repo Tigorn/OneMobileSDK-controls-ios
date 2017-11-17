@@ -86,6 +86,8 @@ public class ControlsPresentationController {
             
         case .play:
             behavior = { [weak self] in self?.hiddenPlaying(by: $0) }
+        
+        case .resetTimer: break
             
         default: fatalError("Unhandled message: \(message)") }
     }
